@@ -62,13 +62,6 @@ public class Movement : MonoBehaviour
             Vector3 moveHorizontal = playerBody.right * horizontal * acceleration;
 
             rigidbody.AddForce(moveVertical + moveHorizontal, ForceMode.Acceleration);
-
-            animator.SetBool("isForward", vertical > 0);
-            animator.SetBool("isBackward", vertical < 0);
-            animator.SetBool("isRight", horizontal > 0);
-            animator.SetBool("isLeft", horizontal < 0);
-
-            animator.SetBool("isRunning", runModifier && vertical != 0);
         }
     }
     void Jump()
@@ -122,7 +115,6 @@ public class Movement : MonoBehaviour
         {
             isGrounded = true;
             animator.SetBool("IsJumping", false);
-            animator.SetBool("isGrounded", true);
         }
     }
 
@@ -139,7 +131,6 @@ public class Movement : MonoBehaviour
         if (other.tag == "Floor")
         {
             isGrounded = false;
-            animator.SetBool("isGrounded", false);
         }
     }
 }
