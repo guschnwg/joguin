@@ -22,7 +22,7 @@ public class Movement : MonoBehaviour
         rigidbody = GetComponent<Rigidbody>();
         playerBody = GetComponent<Transform>();
 
-        //Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
@@ -37,15 +37,14 @@ public class Movement : MonoBehaviour
         if (isGrounded || true) // Why not
         {
             Vector3 currentVelocity = rigidbody.velocity;
-            currentVelocity.x *= drag;
             currentVelocity.z *= drag;
+            currentVelocity.x *= drag;
             rigidbody.velocity = currentVelocity;
         }
 
         Vector3 localVelocity = Quaternion.Inverse(transform.rotation) * rigidbody.velocity / 8; // Arbitrary 😬
-        Debug.Log(localVelocity);
-        animator.SetFloat("VelocityX", localVelocity.x);
-        animator.SetFloat("VelocityZ", localVelocity.z);
+        Debug.Log(localVelocity.z);
+        animator.SetFloat("Velocity", localVelocity.z);
     }
 
     void Translation()
@@ -64,6 +63,7 @@ public class Movement : MonoBehaviour
             rigidbody.AddForce(moveVertical + moveHorizontal, ForceMode.Acceleration);
         }
     }
+
     void Jump()
     {
         if (isGrounded)
@@ -111,7 +111,7 @@ public class Movement : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Floor")
+        if (other.CompareTag("Floor"))
         {
             isGrounded = true;
             animator.SetBool("IsJumping", false);
@@ -120,7 +120,7 @@ public class Movement : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.tag == "Floor")
+        if (other.CompareTag("Floor"))
         {
             isGrounded = true;
         }
@@ -128,7 +128,7 @@ public class Movement : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.tag == "Floor")
+        if (other.CompareTag("Floor"))
         {
             isGrounded = false;
         }
