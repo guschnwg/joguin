@@ -47,8 +47,7 @@ public class PlayerMovement : MonoBehaviour
         inputRun = Input.GetKey(KeyCode.LeftShift);
         inputJump = Input.GetKeyDown(KeyCode.Space);
 
-        cameraForward = camera.transform.forward;
-        cameraForward.y = 0;
+        cameraForward = Vector3.Scale(camera.transform.forward, new Vector3(1, 0, 1)).normalized;
 
         Jump();
 
@@ -62,11 +61,6 @@ public class PlayerMovement : MonoBehaviour
         currentVelocity.z *= drag;
         currentVelocity.x *= drag;
         rigidbody.velocity = currentVelocity;
-
-
-        // Later we do it better
-        speedMagnitude = rigidbody.velocity.magnitude;
-        animator.SetFloat("Speed", Mathf.InverseLerp(0, speedMagnitudeMax, speedMagnitude) * (inputVertical < 0 ? -1 : 1));
     }
 
 
@@ -82,20 +76,14 @@ public class PlayerMovement : MonoBehaviour
 
     void Movement()
     {
-        angleBetweenPlayerAndCamera = Vector3.SignedAngle(transform.forward, cameraForward, Vector3.up);
-        angleWanted = (90 - 45 * inputVertical) * inputHorizontal * -1;
-        angleAccepted = Mathf.Abs(angleBetweenPlayerAndCamera - angleWanted) < 10;
+        move = inputVertical * cameraForward + inputHorizontal * camera.transform.right;
 
-        float speed = inputRun ? runSpeed : walkSpeed;
+        move = transform.InverseTransformDirection(move);
 
-        if (!angleAccepted)
-        {
-            transform.Rotate(Vector3.up * (angleBetweenPlayerAndCamera - angleWanted) * movementRotationSpeed);
-        }
+        // move = Vector3.ProjectOnPlane(move, Vector3.up);
 
-        move = transform.forward * Mathf.Clamp(Mathf.Abs(inputHorizontal) + Mathf.Abs(inputVertical), 0, 1) * speed;
-        rigidbody.AddForce(move, ForceMode.Acceleration);
-
+        float toTurn = Mathf.Atan2(move.x, move.z);
+        float forward = move.z;
     }
 
     void Jump()
